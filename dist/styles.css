@@ -1,0 +1,13 @@
+* {
+    margin: 3vh auto;
+    background: #eee;
+}
+
+.add {
+    text-align: center;
+}
+
+.delete {
+    text-align: center;
+}
+

@@ -1,6 +1,10 @@
 import {initializeApp} from 'firebase/app'
 import {
-    getFirestore, collection, getDocs
+    getFirestore, collection, onSnapshot, //before realtime getDocs
+    addDoc, deleteDoc, doc,
+    query, where,
+    orderBy, serverTimestamp,
+    getDoc,
 } from 'firebase/firestore'
 const firebaseConfig = {
     apiKey: "AIzaSyDDEL6qaZwVaC-atyuWzkCfVsbRkfD5L5w",
@@ -19,17 +23,78 @@ const db = getFirestore()
  
 //collection reference
 const colRef = collection(db, 'books') //colRef:collection reference
+// const output = document.querySelector('.output') //I added
 
 //get collection data
-getDocs(colRef)
-.then((snapshot) => {
-    console.log(snapshot.docs)
+// getDocs(colRef)
+// .then((snapshot) => {
+//     //console.log(snapshot.docs) to get all info
+//     let books = []
+//     snapshot.docs.forEach((doc)=> {
+//         books.push({...doc.data(), id: doc.id})
+//     })
+//     console.log(books);
+//     books.forEach((book,index) =>{
+//     output.innerHTML += `<p>${index+1}. ${book.title} by ${book.author}</p>`
+//     })
+// })
+// .catch(err => {
+//     console.log(err.message);
+// })
+
+//realtime collection data
+onSnapshot(colRef, (snapshot) => {
     let books = []
-    snapshot.docs.forEach((doc)=> {
-        books.push({...doc.data(), id: doc.id})
+    const output = document.querySelector('.output') //I added
+    snapshot.docs.forEach(doc => {
+      books.push({ ...doc.data(), id: doc.id })
     })
-    console.log(books);
+    console.log(books)
+    output.innerHTML = ''
+    books.forEach((book,index) =>{
+    output.innerHTML += `<p>${index+1}. ${book.title} by ${book.author}</p>`
+    })
+  })
+  
+
+
+// adding docs
+const addBookForm = document.querySelector('.add')
+addBookForm.addEventListener('submit', (e) => {
+  e.preventDefault()
+
+  addDoc(colRef, {
+    title: addBookForm.title.value,
+    author: addBookForm.author.value,
+    createdAt: serverTimestamp()
+  })
+  .then(() => {
+    addBookForm.reset()
+  })
 })
-.catch(err => {
-    console.log(err.message);
+
+// deleting docs
+const deleteBookForm = document.querySelector('.delete')
+deleteBookForm.addEventListener('submit', (e) => {
+  e.preventDefault()
+
+  const docRef = doc(db, 'books', deleteBookForm.id.value)
+
+  deleteDoc(docRef)
+    .then(() => {
+      deleteBookForm.reset()
+    })
 })
+
+
+// // fetching a single document (& realtime)
+// const docRef = doc(db, 'books', 'gGu4P9x0ZHK9SspA1d9j')
+
+// // getDoc(docRef)
+// //   .then(doc => {
+// //     console.log(doc.data(), doc.id)
+// //   })
+
+// onSnapshot(docRef, (doc) => {
+//   console.log(doc.data(), doc.id)
+// })
