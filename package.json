@@ -1,0 +1,28 @@
+{
+  "name": "js-fb9-practice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Salvador318Alvarez/JS-Firebase-Practice.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Salvador318Alvarez/JS-Firebase-Practice/issues"
+  },
+  "homepage": "https://github.com/Salvador318Alvarez/JS-Firebase-Practice#readme",
+  "devDependencies": {
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "firebase": "^9.15.0"
+  }
+}
