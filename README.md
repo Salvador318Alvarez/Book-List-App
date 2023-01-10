@@ -4,3 +4,5 @@
 
 live demo here: 
 https://book-list-app318.netlify.app/
+
+If you open up the console (Ctrl+Shift+J) then you can find the id of a book you want to delete. 
