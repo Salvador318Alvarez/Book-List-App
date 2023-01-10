@@ -4,7 +4,7 @@ import {
     addDoc, deleteDoc, doc,
     query, where,
     orderBy, serverTimestamp,
-    getDoc,
+    getDoc, updateDoc
 } from 'firebase/firestore'
 const firebaseConfig = {
     apiKey: "AIzaSyDDEL6qaZwVaC-atyuWzkCfVsbRkfD5L5w",
@@ -21,29 +21,15 @@ initializeApp(firebaseConfig)
 //init services
 const db = getFirestore()
  
-//collection reference
-const colRef = collection(db, 'books') //colRef:collection reference
-// const output = document.querySelector('.output') //I added
+//collection reference  //colRef:collection reference
+const colRef = collection(db, 'books') 
+   // const output = document.querySelector('.output') //I added
 
-//get collection data
-// getDocs(colRef)
-// .then((snapshot) => {
-//     //console.log(snapshot.docs) to get all info
-//     let books = []
-//     snapshot.docs.forEach((doc)=> {
-//         books.push({...doc.data(), id: doc.id})
-//     })
-//     console.log(books);
-//     books.forEach((book,index) =>{
-//     output.innerHTML += `<p>${index+1}. ${book.title} by ${book.author}</p>`
-//     })
-// })
-// .catch(err => {
-//     console.log(err.message);
-// })
+//queries
+const q= query(colRef, where("author", "!=", "Peter Jackson"), orderBy("author", "asc" ) )
 
 //realtime collection data
-onSnapshot(colRef, (snapshot) => {
+onSnapshot(q/*  or q */, (snapshot) => {
     let books = []
     const output = document.querySelector('.output') //I added
     snapshot.docs.forEach(doc => {
@@ -52,7 +38,7 @@ onSnapshot(colRef, (snapshot) => {
     console.log(books)
     output.innerHTML = ''
     books.forEach((book,index) =>{
-    output.innerHTML += `<p>${index+1}. ${book.title} by ${book.author}</p>`
+    output.innerHTML += `<p>${index+1}. ${book.title} by ${book.author} with an id of: ${book.id}</p>`
     })
   })
   
@@ -86,6 +72,21 @@ deleteBookForm.addEventListener('submit', (e) => {
     })
 })
 
+const updateForm = document.querySelector('.update')
+
+updateForm.addEventListener('submit', (e) => {
+  e.preventDefault()
+
+  let docRef = doc(db, 'books', updateForm.id.value)
+
+  updateDoc(docRef, {
+    title: updateForm.title.value,
+    author: updateForm.author.value
+  })
+  .then(() => {
+    updateForm.reset()
+  })
+})
 
 // // fetching a single document (& realtime)
 // const docRef = doc(db, 'books', 'gGu4P9x0ZHK9SspA1d9j')
@@ -97,4 +98,21 @@ deleteBookForm.addEventListener('submit', (e) => {
 
 // onSnapshot(docRef, (doc) => {
 //   console.log(doc.data(), doc.id)
+// })
+
+//get collection data
+// getDocs(colRef)
+// .then((snapshot) => {
+//     //console.log(snapshot.docs) to get all info
+//     let books = []
+//     snapshot.docs.forEach((doc)=> {
+//         books.push({...doc.data(), id: doc.id})
+//     })
+//     console.log(books);
+//     books.forEach((book,index) =>{
+//     output.innerHTML += `<p>${index+1}. ${book.title} by ${book.author}</p>`
+//     })
+// })
+// .catch(err => {
+//     console.log(err.message);
 // })
