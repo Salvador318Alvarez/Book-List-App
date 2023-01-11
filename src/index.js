@@ -28,18 +28,24 @@ const colRef = collection(db, 'books')
 //queries
 const q= query(colRef, where("author", "!=", "Peter Jackson"), orderBy("author", "asc" ) )
 
+const output = document.querySelector('.output')
+
 //realtime collection data
 onSnapshot(q/*  or q */, (snapshot) => {
     let books = []
-    const output = document.querySelector('.output') //I added
+     //I added
     snapshot.docs.forEach(doc => {
       books.push({ ...doc.data(), id: doc.id })
     })
     console.log(books)
-    output.innerHTML = ''
+    output.innerHTML="";
     books.forEach((book,index) =>{
-    output.innerHTML += `<p>${index+1}. ${book.title} by ${book.author} with an id of: ${book.id}</p>`
-    })
+      output.innerHTML += `
+      <p data-id="${book.id}">${index+1}. ${book.title} by ${book.author}
+        <button type="reset">Delete</button>
+      </p>
+      `
+      })
   })
   
 
@@ -60,17 +66,17 @@ addBookForm.addEventListener('submit', (e) => {
 })
 
 // deleting docs
-const deleteBookForm = document.querySelector('.delete')
-deleteBookForm.addEventListener('submit', (e) => {
-  e.preventDefault()
+// const deleteBookForm = document.querySelector('.delete')
+// deleteBookForm.addEventListener('submit', (e) => {
+//   e.preventDefault()
 
-  const docRef = doc(db, 'books', deleteBookForm.id.value)
+//   const docRef = doc(db, 'books', deleteBookForm.id.value)
 
-  deleteDoc(docRef)
-    .then(() => {
-      deleteBookForm.reset()
-    })
-})
+//   deleteDoc(docRef)
+//     .then(() => {
+//       deleteBookForm.reset()
+//     })
+// })
 
 const updateForm = document.querySelector('.update')
 
@@ -87,6 +93,19 @@ updateForm.addEventListener('submit', (e) => {
     updateForm.reset()
   })
 })
+
+output.addEventListener('click', e => {
+  //console.log(e);
+  if(e.target.tagName === 'BUTTON'){
+    console.log(e.target.parentElement.getAttribute('data-id'));
+    const docRef = doc(db, 'books', e.target.parentElement.getAttribute('data-id'))
+    deleteDoc(docRef)
+  }
+})
+  
+
+
+
 
 // // fetching a single document (& realtime)
 // const docRef = doc(db, 'books', 'gGu4P9x0ZHK9SspA1d9j')
